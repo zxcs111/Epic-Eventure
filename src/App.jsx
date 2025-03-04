@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css';
+import EventPage from './components/EventPage'; // Import the EventPage component
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faHome, 
@@ -11,6 +13,7 @@ import {
   faGlobe, 
   faHandshake 
 } from '@fortawesome/free-solid-svg-icons';
+
 
 const App = () => {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -35,34 +38,47 @@ const App = () => {
   };
 
   return (
-    <div className="App">
-      <header className={`header ${visible ? '' : 'hidden'}`}>
-        <div className="header-content">
-          <h1>Eventure Awaits</h1>
-          <nav>
-            <ul>
-              <li onClick={() => scrollToSection('landing')}>
-                <FontAwesomeIcon icon={faHome} /> Home
-              </li>
-              <li onClick={() => scrollToSection('about')}>
-                <FontAwesomeIcon icon={faInfoCircle} /> About
-              </li>
-              <li onClick={() => scrollToSection('contact')}>
-                <FontAwesomeIcon icon={faEnvelope} /> Contact
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </header>
-      <LandingImage />
-      <AboutSection />
-      <FeaturedEvents />
-      <ContactSection />
-      <Footer />
-    </div>
+    <Router>
+      <div className="App">
+        <header className={`header ${visible ? '' : 'hidden'}`}>
+          <div className="header-content">
+            <h1>Epic Eventure</h1>
+            <nav>
+              <ul>
+                <li onClick={() => scrollToSection('landing')}>Home</li>
+                <li>
+                  <Link to="/events" className="nav-link">Events</Link> {/* Add class */}
+                </li>
+                <li onClick={() => scrollToSection('about')}>About</li>
+                <li onClick={() => scrollToSection('contact')}>Contact</li>
+              </ul>
+            </nav>
+          </div>
+        </header>
+
+        <Routes>
+          {/* Home route (App.jsx content) */}
+          <Route
+            path="/"
+            element={
+              <>
+                <LandingImage />
+                <AboutSection />
+                <FeaturedEvents />
+                <ContactSection />
+                <Footer />
+              </>
+            }
+          />
+          {/* Events route (EventPage.jsx) */}
+          <Route path="/events" element={<EventPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
+// LandingImage Component
 const LandingImage = () => {
   return (
     <section className="landing-image" id="landing">
@@ -72,7 +88,7 @@ const LandingImage = () => {
       />
       <div className="landing-overlay">
         <div className="landing-text">
-          <h2>Discover Exciting Events Near You</h2>
+          <h2>Discover Exciting Events</h2>
           <p>Join thousands of others in experiencing unforgettable moments.</p>
           <div className="landing-buttons">
             <button className="cta-button">Get Started</button>
@@ -84,6 +100,7 @@ const LandingImage = () => {
   );
 };
 
+// AboutSection Component
 const AboutSection = () => {
   return (
     <section className="about-section" id="about">
@@ -131,6 +148,7 @@ const AboutSection = () => {
   );
 };
 
+// FeaturedEvents Component
 const FeaturedEvents = () => {
   return (
     <section className="featured-events">
@@ -162,15 +180,27 @@ const FeaturedEvents = () => {
   );
 };
 
-const EventCard = ({ title, date, location, image, description }) => {
+// EventCard Component
+const EventCard = ({ title, date, location, image, description, eventId }) => {
+  const navigate = useNavigate();
+
+  const handleEventClick = () => {
+    navigate(`/events`); // Navigate to the Events page
+  };
+
   return (
-    <div className="event-card">
-      <img src={image} alt={title} className="event-image" />
-      <h3>{title}</h3>
-      <p className="event-date">Date: {date}</p>
-      <p className="event-location">Location: {location}</p>
-      <p className="event-description">{description}</p>
-      <div className="button-group">
+    <div className="event-card" onClick={handleEventClick}>
+      <div className="event-image-container">
+        <img src={image} alt={title} className="event-image" />
+        <div className="image-overlay"></div>
+      </div>
+      <div className="event-details">
+        <h3>{title}</h3>
+        <p className="event-date-location">
+          <FontAwesomeIcon icon={faCalendarAlt} /> {date} <br />
+          <FontAwesomeIcon icon={faGlobe} /> {location}
+        </p>
+        <p className="event-description">{description}</p>
         <button className="ticket-button">
           <FontAwesomeIcon icon={faTicketAlt} /> Buy Tickets
         </button>
@@ -179,6 +209,7 @@ const EventCard = ({ title, date, location, image, description }) => {
   );
 };
 
+// ContactSection Component
 const ContactSection = () => {
   return (
     <section className="contact-section" id="contact">
@@ -196,6 +227,7 @@ const ContactSection = () => {
   );
 };
 
+// Footer Component
 const Footer = () => {
   return (
     <footer className="footer">
