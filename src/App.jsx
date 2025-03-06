@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css';
 import EventPage from './components/EventPage'; 
+import PurchaseTicket from './components/PurchaseTicket';
+import PurchaseHistory from './components/PurchaseHistory';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faHome, 
@@ -15,24 +17,41 @@ import {
   faSearch,
   faArrowRight,
   faPhone,
-  faMapMarkerAlt
+  faMapMarkerAlt,
+  faHistory
 } from '@fortawesome/free-solid-svg-icons';
 
 
 const App = () => {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [visible, setVisible] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
+  let lastScrollY = 0;
+  const [isPurchaseHistoryOpen, setIsPurchaseHistoryOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollPos = window.pageYOffset;
-      setVisible(prevScrollPos > currentScrollPos || currentScrollPos < 10);
-      setPrevScrollPos(currentScrollPos);
+      const currentScrollY = window.scrollY;
+      
+      // Handle navbar visibility
+      if (currentScrollY > lastScrollY) {
+        setVisible(false);
+      } else {
+        setVisible(true);
+      }
+      lastScrollY = currentScrollY;
+
+      // Handle navbar background
+      if (currentScrollY > 50) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [prevScrollPos, visible]);
+  }, []);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -44,7 +63,7 @@ const App = () => {
   return (
     <Router>
       <div className="App">
-        <header className={`event-page-header ${visible ? '' : 'hidden'}`}>
+        <header className={`event-page-header ${visible ? '' : 'hidden'} ${scrolled ? 'scrolled' : ''}`}>
           <div className="logo">
             <h1>Epic Eventure</h1>
           </div>
@@ -67,6 +86,13 @@ const App = () => {
             }}>
               <FontAwesomeIcon icon={faEnvelope} /> Contact
             </Link>
+            <button 
+              className="nav-link history-btn"
+              onClick={() => setIsPurchaseHistoryOpen(true)}
+              title="Purchase History"
+            >
+              <FontAwesomeIcon icon={faHistory} />
+            </button>
           </nav>
         </header>
 
@@ -86,8 +112,13 @@ const App = () => {
           />
           {/* Events route (EventPage.jsx) */}
           <Route path="/events" element={<EventPage />} />
+          <Route path="/purchase/:eventId" element={<PurchaseTicket />} />
         </Routes>
       </div>
+      <PurchaseHistory 
+        isOpen={isPurchaseHistoryOpen} 
+        onClose={() => setIsPurchaseHistoryOpen(false)} 
+      />
     </Router>
   );
 };
@@ -98,10 +129,6 @@ const LandingImage = () => {
   
   return (
     <section className="landing-image" id="landing">
-      <img
-        src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-        alt="Epic Eventure Landing"
-      />
       <div className="landing-overlay">
         <div className="landing-text">
           <h2>Discover Extraordinary Events</h2>
@@ -181,89 +208,101 @@ const AboutSection = () => {
 const FeaturedEvents = () => {
   const navigate = useNavigate();
   
-  const featuredEvents = [
-    {
-      title: "Music Festival 2025",
-      date: "July 15, 2025",
-      location: "Central Park, New York",
-      image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3",
-      description: "Experience the biggest music festival of the year featuring top artists from around the globe. Don't miss out on this unforgettable weekend!"
-    },
-    {
-      title: "Tech Conference 2025",
-      date: "August 20, 2025",
-      location: "San Francisco, CA",
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87",
-      description: "Join industry leaders and innovators at the premier tech conference of the year. Explore the future of technology and network with experts."
-    },
-    {
-      title: "Art Exhibition",
-      date: "September 10, 2025",
-      location: "London, UK",
-      image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26",
-      description: "Immerse yourself in a world of creativity at our annual art exhibition. Discover stunning works from emerging and established artists."
-    }
-  ];
-
   return (
-    <section className="featured-events" id="featured">
-      <div className="section-header">
-        <h2>Featured Events</h2>
-        <p className="section-subtitle">Handpicked experiences you don't want to miss</p>
-      </div>
-      <div className="event-list">
-        {featuredEvents.map((event, index) => (
-          <EventCard key={index} {...event} />
-        ))}
-      </div>
-      <div className="view-all-container">
-        <button 
-          className="view-all-button"
-          onClick={() => navigate('/events')}
-        >
-          <FontAwesomeIcon icon={faCalendarAlt} className="button-icon" />
-          View All Events
-          <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
-        </button>
-      </div>
-    </section>
-  );
-};
-
-// EventCard Component
-const EventCard = ({ title, date, location, image, description }) => {
-  const navigate = useNavigate();
-
-  const handleEventClick = () => {
-    navigate(`/events`);
-  };
-
-  return (
-    <div className="event-card" onClick={handleEventClick}>
-      <div className="event-image-container">
-        <img src={image} alt={title} className="event-image" />
-        <div className="image-overlay"></div>
-      </div>
-      <div className="event-details">
-        <h3>{title}</h3>
-        <div className="event-info">
-          <div className="event-info-item">
-            <FontAwesomeIcon icon={faCalendarAlt} className="event-icon" />
-            <span>{date}</span>
-          </div>
-          <div className="event-info-item">
-            <FontAwesomeIcon icon={faMapMarkerAlt} className="event-icon" />
-            <span>{location}</span>
+    <section className="featured-events">
+      <h2>Featured Events</h2>
+      <div className="featured-grid">
+        <div className="featured-card">
+          <img 
+            src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800" 
+            alt="Music Festival 2025" 
+            className="featured-image"
+          />
+          <div className="featured-content">
+            <h3 className="featured-title">Music Festival 2025</h3>
+            <div className="featured-details">
+              <div className="featured-detail">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>July 15, 2025</span>
+              </div>
+              <div className="featured-detail">
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+                <span>Central Park, New York</span>
+              </div>
+            </div>
+            <p className="featured-description">
+              Experience the biggest music festival of the year featuring top artists from around the globe. Don't miss out on this unforgettable weekend!
+            </p>
+            <div className="featured-actions">
+              <button className="featured-view-btn">
+                <span>View Details</span>
+                <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
+              </button>
+            </div>
           </div>
         </div>
-        <p className="event-description">{description}</p>
-        <button className="event-button">
-          <FontAwesomeIcon icon={faTicketAlt} className="button-icon" />
-          View Details
-          <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
-        </button>
+
+        <div className="featured-card">
+          <img 
+            src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800" 
+            alt="Tech Conference 2025" 
+            className="featured-image"
+          />
+          <div className="featured-content">
+            <h3 className="featured-title">Tech Conference 2025</h3>
+            <div className="featured-details">
+              <div className="featured-detail">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>August 20, 2025</span>
+              </div>
+              <div className="featured-detail">
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+                <span>San Francisco, CA</span>
+              </div>
+            </div>
+            <p className="featured-description">
+              Join industry leaders and innovators at the premier tech conference of the year. Explore the future of technology and network with experts.
+            </p>
+            <div className="featured-actions">
+              <button className="featured-view-btn">
+                <span>View Details</span>
+                <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="featured-card">
+          <img 
+            src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800" 
+            alt="Art Exhibition" 
+            className="featured-image"
+          />
+          <div className="featured-content">
+            <h3 className="featured-title">Art Exhibition</h3>
+            <div className="featured-details">
+              <div className="featured-detail">
+                <FontAwesomeIcon icon={faCalendarAlt} />
+                <span>September 10, 2025</span>
+              </div>
+              <div className="featured-detail">
+                <FontAwesomeIcon icon={faMapMarkerAlt} />
+                <span>London, UK</span>
+              </div>
+            </div>
+            <p className="featured-description">
+              Immerse yourself in a world of creativity at our annual art exhibition. Discover stunning works from emerging and established artists.
+            </p>
+            <div className="featured-actions">
+              <button className="featured-view-btn">
+                <span>View Details</span>
+                <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
