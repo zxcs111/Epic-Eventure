@@ -1,7 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faFilter } from '@fortawesome/free-solid-svg-icons';
+import { 
+  faSearch, 
+  faFilter, 
+  faCalendarAlt, 
+  faMapMarkerAlt, 
+  faTicketAlt, 
+  faClock, 
+  faArrowLeft 
+} from '@fortawesome/free-solid-svg-icons';
 import './EventPage.css';
 
 const EventPage = () => {
@@ -53,6 +61,48 @@ const EventPage = () => {
       availableTickets: 300,
       features: ["Wine Tasting", "Cooking Demos", "Food Sampling", "Chef Meet & Greet"],
       vendors: ["Restaurant 1", "Winery 1", "Restaurant 2"]
+    },
+    {
+      id: 4,
+      title: "International Film Festival",
+      date: "2025-10-05",
+      time: "18:30",
+      location: "Grand Theater",
+      price: 120.00,
+      category: "Arts",
+      image: "https://images.unsplash.com/photo-1478720568477-152d9b164e26",
+      description: "Discover groundbreaking films from around the world at our annual film festival. Meet directors, actors, and fellow film enthusiasts in an immersive cinematic experience.",
+      availableTickets: 200,
+      features: ["Film Screenings", "Director Q&As", "Awards Ceremony", "Networking Events"],
+      specialGuests: ["Director A", "Actor B", "Producer C"]
+    },
+    {
+      id: 5,
+      title: "Marathon City Run",
+      date: "2025-11-12",
+      time: "07:00",
+      location: "City Center",
+      price: 50.00,
+      category: "Sports",
+      image: "https://images.unsplash.com/photo-1530549387789-4c1017266635",
+      description: "Challenge yourself in our annual city marathon. Run through iconic landmarks and beautiful scenery while competing with participants from around the world.",
+      availableTickets: 1000,
+      features: ["Professional Timing", "Hydration Stations", "Finisher Medals", "Post-Race Party"],
+      distances: ["5K", "10K", "Half Marathon", "Full Marathon"]
+    },
+    {
+      id: 6,
+      title: "Business Leadership Summit",
+      date: "2025-12-03",
+      time: "10:00",
+      location: "Business Center",
+      price: 299.99,
+      category: "Technology",
+      image: "https://images.unsplash.com/photo-1556761175-b413da4baf72",
+      description: "Join top business leaders and entrepreneurs for a day of inspiration, learning, and networking. Gain valuable insights to take your career or business to the next level.",
+      availableTickets: 150,
+      features: ["Keynote Speeches", "Panel Discussions", "Networking Lunch", "Workshop Sessions"],
+      speakers: ["CEO X", "Entrepreneur Y", "Author Z"]
     }
   ];
 
@@ -70,13 +120,6 @@ const EventPage = () => {
     setSelectedEvent(null);
   };
 
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   const filteredEvents = events.filter(event => {
     const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          event.description.toLowerCase().includes(searchQuery.toLowerCase());
@@ -86,15 +129,10 @@ const EventPage = () => {
 
   return (
     <div className="event-page">
-      <nav className="event-nav">
-        <Link to="/" className="nav-link" onClick={() => scrollToSection('home')}>Home</Link>
-        <Link to="/" className="nav-link" onClick={() => scrollToSection('about')}>About</Link>
-        <Link to="/" className="nav-link" onClick={() => scrollToSection('contact')}>Contact</Link>
-      </nav>
-
+  
       <header className="event-header">
-        <h1>Upcoming Events</h1>
-        <p>Discover and book amazing events happening near you</p>
+        <h1>Discover Amazing Events</h1>
+        <p>Find and book the perfect event for any occasion</p>
         
         <div className="search-filter-container">
           <div className="search-bar">
@@ -115,7 +153,7 @@ const EventPage = () => {
             >
               {categories.map(category => (
                 <option key={category} value={category}>
-                  {category.charAt(0).toUpperCase() + category.slice(1)}
+                  {category === 'all' ? 'All Categories' : category}
                 </option>
               ))}
             </select>
@@ -123,30 +161,54 @@ const EventPage = () => {
         </div>
       </header>
 
-      <div className="events-grid">
-        {filteredEvents.map((event) => (
-          <div key={event.id} className="event-card">
-            <div className="event-image">
-              <img src={event.image} alt={event.title} />
-              <div className="event-category">{event.category}</div>
-            </div>
-            <div className="event-info">
-              <h3>{event.title}</h3>
-              <p className="event-date">{event.date} at {event.time}</p>
-              <p className="event-location">{event.location}</p>
-              <p className="event-price">${event.price.toFixed(2)}</p>
-              <div className="event-actions">
-                <button onClick={() => handleEventClick(event)} className="details-btn">
-                  View Details
-                </button>
-                <button onClick={() => handleBuyTicket(event)} className="buy-btn">
-                  Buy Tickets
-                </button>
+      {filteredEvents.length === 0 ? (
+        <div className="no-events">
+          <h3>No events found</h3>
+          <p>Try adjusting your search or filter criteria</p>
+        </div>
+      ) : (
+        <div className="events-grid">
+          {filteredEvents.map((event) => (
+            <div key={event.id} className="event-card">
+              <div className="event-image">
+                <img src={event.image} alt={event.title} />
+                <div className="event-category">{event.category}</div>
+              </div>
+              <div className="event-info">
+                <h3>{event.title}</h3>
+                <div className="event-meta">
+                  <div className="event-meta-item">
+                    <FontAwesomeIcon icon={faCalendarAlt} />
+                    <span>{event.date}</span>
+                  </div>
+                  <div className="event-meta-item">
+                    <FontAwesomeIcon icon={faClock} />
+                    <span>{event.time}</span>
+                  </div>
+                </div>
+                <div className="event-meta">
+                  <div className="event-meta-item">
+                    <FontAwesomeIcon icon={faMapMarkerAlt} />
+                    <span>{event.location}</span>
+                  </div>
+                  <div className="event-meta-item">
+                    <FontAwesomeIcon icon={faTicketAlt} />
+                    <span>${event.price.toFixed(2)}</span>
+                  </div>
+                </div>
+                <div className="event-actions">
+                  <button onClick={() => handleEventClick(event)} className="details-btn">
+                    View Details
+                  </button>
+                  <button onClick={() => handleBuyTicket(event)} className="buy-btn">
+                    Buy Tickets
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {selectedEvent && (
         <div className="modal-overlay" onClick={closeModal}>
@@ -157,33 +219,48 @@ const EventPage = () => {
             <h2>{selectedEvent.title}</h2>
             <div className="modal-info-grid">
               <div className="modal-info-item">
-                <span className="info-label">Date & Time</span>
-                <span>{selectedEvent.date} at {selectedEvent.time}</span>
+                <FontAwesomeIcon icon={faCalendarAlt} className="modal-icon" />
+                <div>
+                  <span className="info-label">Date</span>
+                  <span className="info-value">{selectedEvent.date}</span>
+                </div>
               </div>
               <div className="modal-info-item">
-                <span className="info-label">Location</span>
-                <span>{selectedEvent.location}</span>
+                <FontAwesomeIcon icon={faClock} className="modal-icon" />
+                <div>
+                  <span className="info-label">Time</span>
+                  <span className="info-value">{selectedEvent.time}</span>
+                </div>
               </div>
               <div className="modal-info-item">
-                <span className="info-label">Price</span>
-                <span>${selectedEvent.price.toFixed(2)}</span>
+                <FontAwesomeIcon icon={faMapMarkerAlt} className="modal-icon" />
+                <div>
+                  <span className="info-label">Location</span>
+                  <span className="info-value">{selectedEvent.location}</span>
+                </div>
               </div>
               <div className="modal-info-item">
-                <span className="info-label">Available Tickets</span>
-                <span>{selectedEvent.availableTickets}</span>
+                <FontAwesomeIcon icon={faTicketAlt} className="modal-icon" />
+                <div>
+                  <span className="info-label">Price</span>
+                  <span className="info-value">${selectedEvent.price.toFixed(2)}</span>
+                </div>
               </div>
             </div>
-            <div className="modal-description">
+            <div className="modal-section">
               <h3>About This Event</h3>
               <p>{selectedEvent.description}</p>
             </div>
-            <div className="modal-features">
+            <div className="modal-section">
               <h3>Event Features</h3>
               <div className="features-grid">
                 {selectedEvent.features.map((feature, index) => (
                   <div key={index} className="feature-item">{feature}</div>
                 ))}
               </div>
+            </div>
+            <div className="modal-tickets-available">
+              <span>{selectedEvent.availableTickets} tickets available</span>
             </div>
             <button 
               onClick={() => handleBuyTicket(selectedEvent)}
