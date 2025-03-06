@@ -1,16 +1,186 @@
 .event-page {
-  padding: 20px;
-  max-width: 800px;
+  padding: 2rem;
+  max-width: 1200px;
   margin: 0 auto;
+}
+
+.event-header {
   text-align: center;
+  margin-bottom: 3rem;
 }
 
-.event-page h1 {
+.event-header h1 {
   font-size: 2.5rem;
-  margin-bottom: 20px;
+  color: #333;
+  margin-bottom: 1rem;
 }
 
-.event-page p {
+.event-header p {
   font-size: 1.2rem;
-  color: #555;
+  color: #666;
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.event-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+}
+
+.event-image {
+  height: 200px;
+  overflow: hidden;
+}
+
+.event-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.event-info {
+  padding: 1.5rem;
+}
+
+.event-info h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  color: #333;
+}
+
+.event-date, .event-location {
+  color: #666;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.event-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #2c5282;
+  margin: 1rem 0;
+}
+
+.event-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.details-btn, .buy-btn {
+  padding: 0.8rem 1.2rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex: 1;
+}
+
+.details-btn {
+  background-color: #e2e8f0;
+  color: #2d3748;
+}
+
+.details-btn:hover {
+  background-color: #cbd5e0;
+}
+
+.buy-btn {
+  background-color: #4299e1;
+  color: white;
+}
+
+.buy-btn:hover {
+  background-color: #3182ce;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+}
+
+.modal-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.modal-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.modal-date, .modal-location, .modal-description, .modal-tickets, .modal-price {
+  margin-bottom: 1rem;
+  color: #4a5568;
+}
+
+.modal-price {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #2c5282;
+}
+
+.modal-buy-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: #4299e1;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-top: 1rem;
+}
+
+.modal-buy-btn:hover {
+  background-color: #3182ce;
 }

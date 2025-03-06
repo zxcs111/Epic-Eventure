@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
 import './App.css';
-import EventPage from './components/EventPage'; // Import the EventPage component
+import EventPage from './components/EventPage'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faHome, 
@@ -42,7 +42,7 @@ const App = () => {
       <div className="App">
         <header className={`header ${visible ? '' : 'hidden'}`}>
           <div className="header-content">
-            <h1>Epic Eventure</h1>
+            <h1>Eventure Eventure</h1>
             <nav>
               <ul>
                 <li onClick={() => scrollToSection('landing')}>Home</li>
