@@ -2,7 +2,10 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFacebook, faTwitter, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { FaHistory, FaUser } from 'react-icons/fa';
+
 
 const images = [
   'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b', // Concert
@@ -150,6 +153,56 @@ function App() {
           </div>
         </div>
       </section>
+
+      {/* Inquiries Section */}
+      <section className="inquiries-section">
+        <div className="inquiries-container">
+          <h2>Have Questions? Get in Touch!</h2>
+          <p>
+            We're here to help! Whether you have questions about our events, need assistance, or want to collaborate, feel free to reach out.
+          </p>
+          <form className="inquiries-form">
+            <input type="text" placeholder="Your Name" required />
+            <input type="email" placeholder="Your Email" required />
+            <textarea placeholder="Your Message" required></textarea>
+            <button type="submit">Send Message</button>
+          </form>
+          <div className="contact-details">
+            <p>Or contact us directly:</p>
+            <p>Email: <a href="mailto:info@eventure.com">info@eventure.com</a></p>
+            <p>Phone: <a href="tel:+1234567890">+1 (234) 567-890</a></p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Section */}
+      <footer className="footer">
+        <div className="footer-container">
+          <div className="footer-links">
+            <a href="#home">Home</a>
+            <a href="#about">About</a>
+            <a href="#events">Events</a>
+            <a href="#contact">Contact</a>
+            <a href="#privacy">Privacy Policy</a>
+            <a href="#terms">Terms of Service</a>
+          </div>
+          <div className="social-media">
+            <a href="https://facebook.com" aria-label="Facebook">
+              <FontAwesomeIcon icon={faFacebook} />
+            </a>
+            <a href="https://twitter.com" aria-label="Twitter">
+              <FontAwesomeIcon icon={faTwitter} />
+            </a>
+            <a href="https://instagram.com" aria-label="Instagram">
+              <FontAwesomeIcon icon={faInstagram} />
+            </a>
+            <a href="https://linkedin.com" aria-label="LinkedIn">
+              <FontAwesomeIcon icon={faLinkedin} />
+            </a>
+          </div>
+          <p>&copy; Developed by Johnlloyd Justiniane. 2025 EvenTure. All rights reserved. </p>
+        </div>
+      </footer>
 
     </div>
   );
