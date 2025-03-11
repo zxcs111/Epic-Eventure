@@ -1,395 +1,273 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useNavigate } from 'react-router-dom';
-import './App.css';
-import EventPage from './components/EventPage'; 
-import PurchaseTicket from './components/PurchaseTicket';
-import PurchaseHistory from './components/PurchaseHistory';
+import React, { useEffect, useState } from 'react';
+import Slider from 'react-slick';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
-  faHome, 
-  faInfoCircle, 
-  faEnvelope, 
-  faCalendarAlt, 
-  faTicketAlt, 
+  faBars, 
+  faTimes, 
   faUsers, 
-  faGlobe, 
+  faLightbulb, 
   faHandshake,
-  faSearch,
-  faArrowRight,
+  faEnvelope,
   faPhone,
   faMapMarkerAlt,
-  faHistory
+  faCalendarAlt,
+  faClock,
+  faMapMarkedAlt,
+  faArrowRight,
+  faTicket,
+  faMusic,
+  faTheaterMasks,
+  faRunning
 } from '@fortawesome/free-solid-svg-icons';
+import './App.css';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
+function App() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-const App = () => {
-  const [prevScrollPos, setPrevScrollPos] = useState(0);
-  const [visible, setVisible] = useState(true);
-  const [scrolled, setScrolled] = useState(false);
-  let lastScrollY = 0;
-  const [isPurchaseHistoryOpen, setIsPurchaseHistoryOpen] = useState(false);
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-      
-      // Handle navbar visibility
-      if (currentScrollY > lastScrollY) {
-        setVisible(false);
-      } else {
-        setVisible(true);
-      }
-      lastScrollY = currentScrollY;
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+  };
 
-      // Handle navbar background
-      if (currentScrollY > 50) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
+  const handleScroll = () => {
+    const offset = window.scrollY;
+    if (offset > 50) {
+      setIsScrolled(true);
+    } else {
+      setIsScrolled(false);
     }
   };
 
-  return (
-    <Router>
-      <div className="App">
-        <header className={`event-page-header ${visible ? '' : 'hidden'} ${scrolled ? 'scrolled' : ''}`}>
-          <div className="logo">
-            <h1>Epic Eventure</h1>
-          </div>
-          <nav className="event-nav">
-            <Link to="/" className="nav-link">
-              <FontAwesomeIcon icon={faHome} /> Home
-            </Link>
-            <Link to="/events" className="nav-link">
-              <FontAwesomeIcon icon={faCalendarAlt} /> Events
-            </Link>
-            <Link to="/#about" className="nav-link" onClick={(e) => {
-              e.preventDefault();
-              scrollToSection('about');
-            }}>
-              <FontAwesomeIcon icon={faInfoCircle} /> About
-            </Link>
-            <Link to="/#contact" className="nav-link" onClick={(e) => {
-              e.preventDefault();
-              scrollToSection('contact');
-            }}>
-              <FontAwesomeIcon icon={faEnvelope} /> Contact
-            </Link>
-            <button 
-              className="nav-link history-btn"
-              onClick={() => setIsPurchaseHistoryOpen(true)}
-              title="Purchase History"
-            >
-              <FontAwesomeIcon icon={faHistory} />
-            </button>
-          </nav>
-        </header>
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
-        <Routes>
-          {/* Home route (App.jsx content) */}
-          <Route
-            path="/"
-            element={
-              <>
-                <LandingImage />
-                <AboutSection />
-                <FeaturedEvents />
-                <ContactSection />
-                <Footer />
-              </>
-            }
-          />
-          {/* Events route (EventPage.jsx) */}
-          <Route path="/events" element={<EventPage />} />
-          <Route path="/purchase/:eventId" element={<PurchaseTicket />} />
-        </Routes>
-      </div>
-      <PurchaseHistory 
-        isOpen={isPurchaseHistoryOpen} 
-        onClose={() => setIsPurchaseHistoryOpen(false)} 
-      />
-    </Router>
-  );
-};
+  const carouselSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    autoplaySpeed: 3000,
+    pauseOnHover: true,
+  };
 
-// LandingImage Component
-const LandingImage = () => {
-  const navigate = useNavigate();
-  
+  const carouselImages = [
+    'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b', // Concert
+    'https://images.unsplash.com/photo-1514525253161-7a46d19cd819', // Festival
+    'https://images.unsplash.com/photo-1517649763962-0c623066013b', // Sports
+    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f', // Workshop
+    'https://images.unsplash.com/photo-1529156069898-49953e39b3ac', // Community
+  ];
+
   return (
-    <section className="landing-image" id="landing">
-      <div className="landing-overlay">
-        <div className="landing-text">
-          <h2>Discover Extraordinary Events</h2>
-          <p>Join thousands of others in experiencing unforgettable moments</p>
-          <div className="landing-buttons">
-            <button 
-              className="cta-button primary"
-              onClick={() => navigate('/events')}
-            >
-              Explore Events <FontAwesomeIcon icon={faArrowRight} />
-            </button>
-            <button 
-              className="cta-button secondary"
-              onClick={() => navigate('/events')}
-            >
-              <FontAwesomeIcon icon={faTicketAlt} /> Buy Tickets
-            </button>
-          </div>
+    <div className="event-page">
+      <header className={`event-page-header ${isScrolled ? 'scrolled' : ''}`}>
+        <div className="logo">
+          <h1>Epic Eventure</h1>
         </div>
-      </div>
-    </section>
-  );
-};
+        <button 
+          className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`}
+          onClick={toggleMobileMenu}
+          aria-label="Toggle menu"
+        >
+          <FontAwesomeIcon icon={isMobileMenuOpen ? faTimes : faBars} />
+        </button>
+        <nav className={`event-nav ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+          <a href="#home" className="nav-link" onClick={closeMobileMenu}>Home</a>
+          <a href="#events" className="nav-link" onClick={closeMobileMenu}>Events</a>
+          <a href="#about" className="nav-link" onClick={closeMobileMenu}>About Us</a>
+          <a href="#contact" className="nav-link" onClick={closeMobileMenu}>Contact</a>
+        </nav>
+      </header>
 
-// AboutSection Component
-const AboutSection = () => {
-  return (
-    <section className="about-section" id="about">
-      <div className="section-header">
-        <h2>About Epic Eventure</h2>
-        <p className="section-subtitle">Your gateway to extraordinary experiences</p>
-      </div>
-      <div className="about-content">
+      <section className="hero-section" id="home">
+        <Slider {...carouselSettings}>
+          {carouselImages.map((image, index) => (
+            <div key={index} className="carousel-slide">
+              <img src={image} alt={`Carousel ${index + 1}`} className="carousel-image" />
+              <div className="hero-content">
+                <h1>Discover Amazing Events</h1>
+                <p>Join thousands of people in unforgettable experiences across the globe</p>
+                <div className="hero-buttons">
+                  <a href="#events" className="hero-btn primary">
+                    Explore Events <FontAwesomeIcon icon={faArrowRight} />
+                  </a>
+                  <a href="#about" className="hero-btn secondary">
+                    Get Started
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </Slider>
+      </section>
+
+      <section className="about-section" id="about">
+        <div className="about-header">
+          <h2>About Epic Eventure</h2>
+          <p className="about-subtitle">Your gateway to extraordinary experiences</p>
+        </div>
         <p className="about-description">
-          Welcome to Epic Eventure, your go-to platform for discovering and attending the most exciting events in your area. 
-          Whether you're looking for concerts, workshops, or community gatherings, we've got you covered. 
-          Join us and be part of unforgettable experiences!
+          Welcome to Epic Eventure, your go-to platform for discovering and attending the most exciting events in your area. Whether you're looking for concerts, workshops, or community gatherings, we've got you covered. Join us and be part of unforgettable experiences!
         </p>
-        <div className="about-features">
-          <div className="feature">
-            <div className="feature-icon">
-              <FontAwesomeIcon icon={faUsers} />
-            </div>
+        <div className="features-grid">
+          <div className="feature-card">
+            <FontAwesomeIcon icon={faUsers} className="feature-icon" />
             <h3>Why Choose Us?</h3>
-            <p>
-              We curate the best events to ensure you have access to unique and memorable experiences. 
-              From local meetups to international festivals, we bring the world to your doorstep.
-            </p>
+            <p>We curate the best events to ensure you have access to unique and memorable experiences. From local meetups to international festivals, we bring the world to your doorstep.</p>
           </div>
-          <div className="feature">
-            <div className="feature-icon">
-              <FontAwesomeIcon icon={faGlobe} />
-            </div>
+          <div className="feature-card">
+            <FontAwesomeIcon icon={faLightbulb} className="feature-icon" />
             <h3>Our Mission</h3>
-            <p>
-              Our mission is to connect people through shared experiences. We believe in the power of events 
-              to inspire, educate, and bring communities together.
-            </p>
+            <p>Our mission is to connect people through shared experiences. We believe in the power of events to inspire, educate, and bring communities together.</p>
           </div>
-          <div className="feature">
-            <div className="feature-icon">
-              <FontAwesomeIcon icon={faHandshake} />
-            </div>
+          <div className="feature-card">
+            <FontAwesomeIcon icon={faHandshake} className="feature-icon" />
             <h3>Join the Community</h3>
-            <p>
-              Become part of a growing community of event enthusiasts. Share your experiences, 
-              discover new interests, and make lifelong connections.
-            </p>
+            <p>Become part of a growing community of event enthusiasts. Share your experiences, discover new interests, and make lifelong connections.</p>
           </div>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
 
-// FeaturedEvents Component
-const FeaturedEvents = () => {
-  const navigate = useNavigate();
-  
-  return (
-    <section className="featured-events">
-      <h2>Featured Events</h2>
-      <div className="featured-grid">
-        <div className="featured-card">
-          <img 
-            src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=800" 
-            alt="Music Festival 2025" 
-            className="featured-image"
-          />
-          <div className="featured-content">
-            <h3 className="featured-title">Music Festival 2025</h3>
-            <div className="featured-details">
-              <div className="featured-detail">
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                <span>July 15, 2025</span>
+      <section className="featured-events" id="events">
+        <div className="featured-events-header">
+          <h2>Featured Events</h2>
+          <p>Discover our handpicked selection of must-attend events</p>
+        </div>
+        <div className="events-grid">
+          <div className="event-card">
+            <img src="/images/music-festival.jpg" alt="Summer Music Festival" className="event-image" />
+            <div className="event-details">
+              <span className="event-category">
+                <FontAwesomeIcon icon={faMusic} /> Music
+              </span>
+              <h3 className="event-title">Summer Music Festival 2025</h3>
+              <div className="event-meta">
+                <span><FontAwesomeIcon icon={faCalendarAlt} /> July 15-17, 2025</span>
+                <span><FontAwesomeIcon icon={faMapMarkerAlt} /> Central Park, NY</span>
+                <span><FontAwesomeIcon icon={faTicket} /> From $99</span>
               </div>
-              <div className="featured-detail">
-                <FontAwesomeIcon icon={faMapMarkerAlt} />
-                <span>Central Park, New York</span>
-              </div>
-            </div>
-            <p className="featured-description">
-              Experience the biggest music festival of the year featuring top artists from around the globe. Don't miss out on this unforgettable weekend!
-            </p>
-            <div className="featured-actions">
-              <button className="featured-view-btn">
-                <span>View Details</span>
-                <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
-              </button>
+              <a href="/events/summer-music-festival" className="view-details">
+                View Details <FontAwesomeIcon icon={faArrowRight} />
+              </a>
             </div>
           </div>
-        </div>
 
-        <div className="featured-card">
-          <img 
-            src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800" 
-            alt="Tech Conference 2025" 
-            className="featured-image"
-          />
-          <div className="featured-content">
-            <h3 className="featured-title">Tech Conference 2025</h3>
-            <div className="featured-details">
-              <div className="featured-detail">
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                <span>August 20, 2025</span>
+          <div className="event-card">
+            <img src="/images/theater-show.jpg" alt="Broadway Theater Show" className="event-image" />
+            <div className="event-details">
+              <span className="event-category">
+                <FontAwesomeIcon icon={faTheaterMasks} /> Theater
+              </span>
+              <h3 className="event-title">Broadway Spectacular</h3>
+              <div className="event-meta">
+                <span><FontAwesomeIcon icon={faCalendarAlt} /> August 5, 2025</span>
+                <span><FontAwesomeIcon icon={faMapMarkerAlt} /> Broadway Theater</span>
+                <span><FontAwesomeIcon icon={faTicket} /> From $149</span>
               </div>
-              <div className="featured-detail">
-                <FontAwesomeIcon icon={faMapMarkerAlt} />
-                <span>San Francisco, CA</span>
-              </div>
+              <a href="/events/broadway-spectacular" className="view-details">
+                View Details <FontAwesomeIcon icon={faArrowRight} />
+              </a>
             </div>
-            <p className="featured-description">
-              Join industry leaders and innovators at the premier tech conference of the year. Explore the future of technology and network with experts.
-            </p>
-            <div className="featured-actions">
-              <button className="featured-view-btn">
-                <span>View Details</span>
-                <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
-              </button>
+          </div>
+
+          <div className="event-card">
+            <img src="/images/marathon.jpg" alt="City Marathon" className="event-image" />
+            <div className="event-details">
+              <span className="event-category">
+                <FontAwesomeIcon icon={faRunning} /> Sports
+              </span>
+              <h3 className="event-title">City Marathon 2025</h3>
+              <div className="event-meta">
+                <span><FontAwesomeIcon icon={faCalendarAlt} /> September 20, 2025</span>
+                <span><FontAwesomeIcon icon={faMapMarkerAlt} /> Downtown Circuit</span>
+                <span><FontAwesomeIcon icon={faTicket} /> From $75</span>
+              </div>
+              <a href="/events/city-marathon" className="view-details">
+                View Details <FontAwesomeIcon icon={faArrowRight} />
+              </a>
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="featured-card">
-          <img 
-            src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800" 
-            alt="Art Exhibition" 
-            className="featured-image"
-          />
-          <div className="featured-content">
-            <h3 className="featured-title">Art Exhibition</h3>
-            <div className="featured-details">
-              <div className="featured-detail">
-                <FontAwesomeIcon icon={faCalendarAlt} />
-                <span>September 10, 2025</span>
-              </div>
-              <div className="featured-detail">
-                <FontAwesomeIcon icon={faMapMarkerAlt} />
-                <span>London, UK</span>
+      <section className="contact-section" id="contact">
+        <div className="contact-container">
+          <div className="contact-header">
+            <h2>Contact Us</h2>
+            <p>We'd love to hear from you</p>
+          </div>
+          <div className="contact-content">
+            <div className="contact-info">
+              <h3>Get in Touch</h3>
+              <p>Have questions or need assistance? Our team is here to help you with any inquiries about events or our platform.</p>
+              <div className="contact-details">
+                <p><FontAwesomeIcon icon={faEnvelope} /> info@epiceventure.com</p>
+                <p><FontAwesomeIcon icon={faPhone} /> +1 (555) 123-4567</p>
+                <p><FontAwesomeIcon icon={faMapMarkerAlt} /> 123 Event Street, New York, NY 10001</p>
               </div>
             </div>
-            <p className="featured-description">
-              Immerse yourself in a world of creativity at our annual art exhibition. Discover stunning works from emerging and established artists.
-            </p>
-            <div className="featured-actions">
-              <button className="featured-view-btn">
-                <span>View Details</span>
-                <FontAwesomeIcon icon={faArrowRight} className="arrow-icon" />
-              </button>
-            </div>
+            <form className="contact-form">
+              <div className="form-group">
+                <label htmlFor="name">Your Name</label>
+                <input type="text" id="name" placeholder="Enter your name" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="email">Email Address</label>
+                <input type="email" id="email" placeholder="Enter your email" />
+              </div>
+              <div className="form-group">
+                <label htmlFor="message">Message</label>
+                <textarea id="message" placeholder="How can we help you?"></textarea>
+              </div>
+              <button type="submit" className="send-message">Send Message</button>
+            </form>
           </div>
         </div>
-      </div>
-    </section>
-  );
-};
+      </section>
 
-// ContactSection Component
-const ContactSection = () => {
-  return (
-    <section className="contact-section" id="contact">
-      <div className="section-header">
-        <h2>Contact Us</h2>
-        <p className="section-subtitle">We'd love to hear from you</p>
-      </div>
-      <div className="contact-container">
-        <div className="contact-info">
-          <h3>Get in Touch</h3>
-          <p>Have questions or need assistance? Our team is here to help you with any inquiries about events or our platform.</p>
-          <div className="contact-details">
-            <p><FontAwesomeIcon icon={faEnvelope} /> info@epiceventure.com</p>
-            <p><FontAwesomeIcon icon={faPhone} /> +1 (555) 123-4567</p>
-            <p><FontAwesomeIcon icon={faMapMarkerAlt} /> 123 Event Street, New York, NY 10001</p>
+      <footer className="footer">
+        <div className="footer-content">
+          <div className="footer-brand">
+            <h3>Epic Eventure</h3>
+            <p>Your gateway to extraordinary experiences</p>
           </div>
-        </div>
-        <div className="contact-form">
-          <form>
-            <div className="form-group">
-              <label htmlFor="name">Your Name</label>
-              <input type="text" id="name" placeholder="Enter your name" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="email">Email Address</label>
-              <input type="email" id="email" placeholder="Enter your email" />
-            </div>
-            <div className="form-group">
-              <label htmlFor="message">Message</label>
-              <textarea id="message" rows="5" placeholder="How can we help you?"></textarea>
-            </div>
-            <button type="submit" className="submit-button">Send Message</button>
-          </form>
-        </div>
-      </div>
-    </section>
-  );
-};
-
-// Footer Component
-const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-content">
-        <div className="footer-logo">
-          <h2>Epic Eventure</h2>
-          <p>Your gateway to extraordinary experiences</p>
-        </div>
-        <div className="footer-links">
-          <div className="footer-section">
-            <h3>Quick Links</h3>
+          <div className="footer-links">
+            <h4>Quick Links</h4>
             <ul>
-              <li><Link to="/">Home</Link></li>
-              <li><Link to="/events">Events</Link></li>
-              <li><Link to="/#about">About Us</Link></li>
-              <li><Link to="/#contact">Contact</Link></li>
+              <li><a href="#home">Home</a></li>
+              <li><a href="#events">Events</a></li>
+              <li><a href="#about">About Us</a></li>
+              <li><a href="#contact">Contact</a></li>
             </ul>
           </div>
-          <div className="footer-section">
-            <h3>Categories</h3>
+          <div className="footer-links">
+            <h4>Categories</h4>
             <ul>
-              <li><Link to="/events">Music</Link></li>
-              <li><Link to="/events">Technology</Link></li>
-              <li><Link to="/events">Arts</Link></li>
-              <li><Link to="/events">Sports</Link></li>
+              <li><a href="#music">Music</a></li>
+              <li><a href="#technology">Technology</a></li>
+              <li><a href="#arts">Arts</a></li>
+              <li><a href="#sports">Sports</a></li>
             </ul>
           </div>
-          <div className="footer-section">
-            <h3>Follow Us</h3>
-            <div className="social-icons">
-              <a href="#" className="social-icon">Facebook</a>
-              <a href="#" className="social-icon">Twitter</a>
-              <a href="#" className="social-icon">Instagram</a>
-              <a href="#" className="social-icon">LinkedIn</a>
-            </div>
-          </div>
         </div>
-      </div>
-      <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Epic Eventure. All rights reserved.</p>
-      </div>
-    </footer>
+        <div className="footer-bottom">
+          <p>&copy; 2025 Epic Eventure. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
   );
-};
+}
 
 export default App;
