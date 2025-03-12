@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFacebook, faTwitter, faInstagram, faLinkedin } from '@fortawesome/free-brands-svg-icons';
 import { FaHistory, FaUser } from 'react-icons/fa';
 
-
 const images = [
   'https://images.unsplash.com/photo-1524368535928-5b5e00ddc76b', // Concert
   'https://images.unsplash.com/photo-1514525253161-7a46d19cd819', // Festival
@@ -21,20 +20,53 @@ const featuredEvents = [
     title: 'Summer Music Festival',
     description: 'Join us for an unforgettable night of music and fun under the stars.',
     date: 'July 15, 2024',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819', // Valid image URL
   },
   {
     id: 2,
     title: 'Tech Conference 2024',
     description: 'Explore the latest trends in technology and innovation.',
     date: 'August 20, 2024',
-    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f', // Valid image URL
   },
   {
     id: 3,
     title: 'Marathon Run',
     description: 'Run for a cause and push your limits in this city-wide marathon.',
     date: 'September 10, 2024',
+    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b', // Valid image URL
+  },
+];
+
+const purchaseHistory = [
+  {
+    id: 1,
+    eventTitle: 'Summer Music Festival',
+    date: 'July 15, 2024',
+    time: '7:00 PM',
+    location: 'Central Park, New York',
+    price: '$50',
+    description: 'Join us for an unforgettable night of music and fun under the stars.',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
+  },
+  {
+    id: 2,
+    eventTitle: 'Tech Conference 2024',
+    date: 'August 20, 2024',
+    time: '9:00 AM',
+    location: 'San Francisco Convention Center',
+    price: '$100',
+    description: 'Explore the latest trends in technology and innovation.',
+    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+  },
+  {
+    id: 3,
+    eventTitle: 'Marathon Run',
+    date: 'September 10, 2024',
+    time: '6:00 AM',
+    location: 'Downtown Chicago',
+    price: '$30',
+    description: 'Run for a cause and push your limits in this city-wide marathon.',
     image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b',
   },
 ];
@@ -42,9 +74,23 @@ const featuredEvents = [
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isPurchaseHistoryOpen, setIsPurchaseHistoryOpen] = useState(false);
+  const [selectedPurchase, setSelectedPurchase] = useState(null);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const togglePurchaseHistory = () => {
+    setIsPurchaseHistoryOpen(!isPurchaseHistoryOpen);
+  };
+
+  const handlePurchaseDetailsClick = (purchase) => {
+    setSelectedPurchase(purchase);
+  };
+
+  const closePurchaseDetails = () => {
+    setSelectedPurchase(null);
   };
 
   useEffect(() => {
@@ -60,16 +106,23 @@ function App() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="App">
       <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
         <div className="navbar-brand">EvenTure</div>
         <div className={`navbar-links ${isMenuOpen ? 'open' : ''}`}>
-          <a href="#home">Home</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
+          <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
+          <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
+          <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
           <a href="#events">Events</a>
-          <a href="#purchase-history"><FaHistory /></a>
+          <a href="#purchase-history" onClick={(e) => { e.preventDefault(); togglePurchaseHistory(); }}><FaHistory /></a>
           <a href="#login"><FaUser /></a>
         </div>
         <div className={`hamburger ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
@@ -79,42 +132,76 @@ function App() {
         </div>
       </nav>
 
-      <Carousel autoPlay infiniteLoop showThumbs={false} showStatus={false}>
-        {images.map((img, index) => (
-          <div key={index}>
-            <img src={img} alt={`Event ${index + 1}`} />
-            <div className="carousel-text">
-              <h1>Welcome to EvenTure</h1>
-              <p>Your ultimate event management solution</p>
-              <div className="button-container">
-                <button className="btn view-events">View Events</button>
-                <button className="btn get-started">Get Started</button>
-              </div>
-            </div>
-          </div>
-        ))}
-      </Carousel>
-
-      {/* Featured Events Section */}
-      <section className="featured-events">
-        <h2>Featured Events</h2>
-        <div className="events-grid">
-          {featuredEvents.map((event) => (
-            <div className="event-card" key={event.id}>
-              <img src={event.image} alt={event.title} />
-              <div className="event-card-content">
-                <h3>{event.title}</h3>
-                <p>{event.description}</p>
-                <div className="event-date">{event.date}</div>
-                <button className="btn">View Details</button>
+      {/* Purchase History Slider */}
+      <div className={`purchase-history-slider ${isPurchaseHistoryOpen ? 'open' : ''}`}>
+        <button className="close-slider" onClick={togglePurchaseHistory}>×</button>
+        <h2>Purchase History</h2>
+        <div className="purchase-list">
+          {purchaseHistory.map((purchase) => (
+            <div className="purchase-item" key={purchase.id} onClick={() => handlePurchaseDetailsClick(purchase)}>
+              <img src={purchase.image} alt={purchase.eventTitle} />
+              <div className="purchase-details">
+                <h3>{purchase.eventTitle}</h3>
+                <p>{purchase.date}</p>
+                <p>{purchase.price}</p>
               </div>
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Purchase Details Pop-up */}
+      {selectedPurchase && (
+      <div className="purchase-details-popup">
+        <div className="popup-content">
+          <button className="close-popup" onClick={closePurchaseDetails}>×</button>
+          <div className="popup-header">
+            <img src={selectedPurchase.image} alt={selectedPurchase.eventTitle} className="popup-image" />
+            <h3>{selectedPurchase.eventTitle}</h3>
+            <p className="event-date">{selectedPurchase.date} • {selectedPurchase.time}</p>
+          </div>
+          <div className="popup-details">
+            <div className="detail-item">
+              <span className="detail-icon">📍</span>
+              <span>{selectedPurchase.location}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-icon">📄</span>
+              <span>{selectedPurchase.description}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-icon">🎟️</span>
+              <span><strong>Tickets Bought:</strong> {selectedPurchase.tickets}</span>
+            </div>
+          </div>
+          <div className="popup-footer">
+            <button className="btn btn-primary">Download Tickets</button>
+          </div>
+        </div>
+      </div>
+    )}
+
+      {/* Home Section */}
+      <section id="home">
+        <Carousel autoPlay infiniteLoop showThumbs={false} showStatus={false}>
+          {images.map((img, index) => (
+            <div key={index}>
+              <img src={img} alt={`Event ${index + 1}`} />
+              <div className="carousel-text">
+                <h1>Welcome to EvenTure</h1>
+                <p>Your ultimate event management solution</p>
+                <div className="button-container">
+                  <button className="btn view-events">View Events</button>
+                  <button className="btn get-started">Get Started</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </Carousel>
       </section>
 
       {/* About Section */}
-      <section className="about-section">
+      <section id="about" className="about-section">
         <div className="about-container">
           <div className="about-image">
             <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5" alt="About Us" />
@@ -154,8 +241,27 @@ function App() {
         </div>
       </section>
 
+     {/* Featured Events Section */}
+     <section className="featured-events">
+        <h2>Featured Events</h2>
+        <div className="events-grid">
+          {featuredEvents.map((event) => (
+            <div className="event-card" key={event.id}>
+              <img src={event.image} alt={event.title} />
+              <div className="event-card-content">
+                <h3>{event.title}</h3>
+                <p>{event.description}</p>
+                <div className="event-date">{event.date}</div>
+                <button className="btn">View Details</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+
       {/* Inquiries Section */}
-      <section className="inquiries-section">
+      <section id="contact" className="inquiries-section">
         <div className="inquiries-container">
           <h2>Have Questions? Get in Touch!</h2>
           <p>
@@ -179,10 +285,10 @@ function App() {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-links">
-            <a href="#home">Home</a>
-            <a href="#about">About</a>
+            <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
+            <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
             <a href="#events">Events</a>
-            <a href="#contact">Contact</a>
+            <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
             <a href="#privacy">Privacy Policy</a>
             <a href="#terms">Terms of Service</a>
           </div>
@@ -203,7 +309,6 @@ function App() {
           <p>&copy; Developed by Johnlloyd Justiniane. 2025 EvenTure. All rights reserved. </p>
         </div>
       </footer>
-
     </div>
   );
 }
