@@ -1,5 +1,3 @@
-
-
 body {
   margin: 0;
   font-family: 'Roboto', sans-serif; /* Professional font */
@@ -157,41 +155,44 @@ body {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   color: white;
-  background-color: transparent; /* Semi-transparent background */
-  border: 2px solid white;
-  border-radius: 30px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.5); /* Add shadow for better contrast */
-}
-
-.btn.view-events:hover {
   background-color: #007BFF;
-  border-color: #007BFF;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  display: inline-block;
 }
 
-.btn.get-started:hover {
-  background-color: #28a745;
-  border-color: #28a745;
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
 }
 
 
 /* Featured Events Section */
-.featured-events {
-  padding: 4rem 2rem;
-  background-color: #ffffff; /* Changed to a lighter gray */
+.events-section {
+  padding: 6rem 2rem;
+  background-color: #f9f9f9;
   text-align: center;
 }
 
-.featured-events h2 {
-  font-size: 2.5rem;
+.events-section h2 {
+  font-size: 2.8rem;
   margin-bottom: 2rem;
   color: #333;
   position: relative;
   display: inline-block;
 }
 
-.featured-events h2::after {
+.events-section h2::after {
   content: '';
   display: block;
   width: 60px;
@@ -210,16 +211,19 @@ body {
 
 .event-card {
   background-color: white;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
 
 .event-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 .event-card img {
@@ -228,37 +232,79 @@ body {
   object-fit: cover;
 }
 
+.event-type {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(0, 123, 255, 0.8); /* Semi-transparent blue */
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
 .event-card-content {
   padding: 1.5rem;
-  text-align: left;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Tighter spacing */
 }
 
 .event-card h3 {
   font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5rem; /* Reduced margin */
   color: #333;
+  font-weight: 600;
 }
 
 .event-card p {
   font-size: 1rem;
   color: #666;
-  margin-bottom: 1rem;
   line-height: 1.5;
+  margin-bottom: 0.5rem; /* Reduced margin */
 }
 
-.event-card .event-date {
-  font-size: 0.9rem;
-  color: #007BFF;
-  font-weight: bold;
-  margin-bottom: 1rem;
+.event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Tighter spacing */
+  margin-bottom: 0.5rem; /* Reduced margin */
+}
+
+.event-details span {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  font-size: 0.95rem;
+  color: #555;
 }
 
-.event-card .event-date::before {
-  content: '📅';
+.event-details span::before {
   font-size: 1rem;
+  color: #007BFF;
+}
+
+.event-details .date::before {
+  content: '📅';
+}
+
+.event-details .time::before {
+  content: '⏰';
+}
+
+.event-details .location::before {
+  content: '📍';
+}
+
+.event-price {
+  font-size: 1.25rem;
+  color: #28a745;
+  font-weight: 700;
+  margin-bottom: 0.5rem; /* Reduced margin */
+  text-align: left; /* Price aligned to the left */
 }
 
 .event-card .btn {
@@ -268,7 +314,7 @@ body {
   color: white;
   background-color: #007BFF;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-align: center;
@@ -277,6 +323,116 @@ body {
 
 .event-card .btn:hover {
   background-color: #0056b3;
+}
+
+/* Event Details Pop-up */
+.event-details-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1001;
+}
+
+.event-details-popup .popup-content {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 16px;
+  max-width: 500px;
+  width: 90%;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.event-details-popup .popup-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.event-details-popup .popup-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.event-details-popup .popup-header h3 {
+  margin: 0;
+  font-size: 24px;
+  color: #333;
+  font-weight: 600;
+}
+
+.event-details-popup .event-date {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #777;
+}
+
+.event-details-popup .popup-details {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.event-details-popup .detail-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #555;
+}
+
+.event-details-popup .detail-icon {
+  font-size: 18px;
+  color: #666;
+}
+
+.event-details-popup .ticket-quantity {
+  width: 60px;
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.event-details-popup .popup-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.event-details-popup .btn-primary {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.event-details-popup .btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.event-details-popup .close-popup {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  color: #555;
+}
+
+.event-details-popup .close-popup:hover {
+  color: #000;
 }
 
 

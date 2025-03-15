@@ -14,27 +14,39 @@ const images = [
   'https://images.unsplash.com/photo-1529156069898-49953e39b3ac', // Community
 ];
 
-const featuredEvents = [
+const events = [
   {
     id: 1,
     title: 'Summer Music Festival',
     description: 'Join us for an unforgettable night of music and fun under the stars.',
     date: 'July 15, 2024',
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819', // Valid image URL
+    time: '7:00 PM',
+    location: 'Central Park, New York',
+    price: '$50',
+    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
+    type: 'Music', // Event type
   },
   {
     id: 2,
     title: 'Tech Conference 2024',
     description: 'Explore the latest trends in technology and innovation.',
     date: 'August 20, 2024',
-    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f', // Valid image URL
+    time: '9:00 AM',
+    location: 'San Francisco Convention Center',
+    price: '$100',
+    image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+    type: 'Tech', // Event type
   },
   {
     id: 3,
     title: 'Marathon Run',
     description: 'Run for a cause and push your limits in this city-wide marathon.',
     date: 'September 10, 2024',
-    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b', // Valid image URL
+    time: '6:00 AM',
+    location: 'Downtown Chicago',
+    price: '$30',
+    image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b',
+    type: 'Sport', // Event type
   },
 ];
 
@@ -76,6 +88,8 @@ function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isPurchaseHistoryOpen, setIsPurchaseHistoryOpen] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState(null);
+  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [ticketQuantity, setTicketQuantity] = useState(1);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -91,6 +105,24 @@ function App() {
 
   const closePurchaseDetails = () => {
     setSelectedPurchase(null);
+  };
+
+  const handleEventClick = (event) => {
+    setSelectedEvent(event);
+  };
+
+  const closeEventDetails = () => {
+    setSelectedEvent(null);
+    setTicketQuantity(1);
+  };
+
+  const handleTicketQuantityChange = (e) => {
+    setTicketQuantity(parseInt(e.target.value, 10));
+  };
+
+  const handlePurchase = () => {
+    alert(`You have successfully purchased ${ticketQuantity} ticket(s) for ${selectedEvent.title}.`);
+    closeEventDetails();
   };
 
   useEffect(() => {
@@ -121,7 +153,7 @@ function App() {
           <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
           <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
           <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
-          <a href="#events">Events</a>
+          <a href="#events" onClick={(e) => { e.preventDefault(); scrollToSection('events'); }}>Events</a>
           <a href="#purchase-history" onClick={(e) => { e.preventDefault(); togglePurchaseHistory(); }}><FaHistory /></a>
           <a href="#login"><FaUser /></a>
         </div>
@@ -152,34 +184,78 @@ function App() {
 
       {/* Purchase Details Pop-up */}
       {selectedPurchase && (
-      <div className="purchase-details-popup">
-        <div className="popup-content">
-          <button className="close-popup" onClick={closePurchaseDetails}>×</button>
-          <div className="popup-header">
-            <img src={selectedPurchase.image} alt={selectedPurchase.eventTitle} className="popup-image" />
-            <h3>{selectedPurchase.eventTitle}</h3>
-            <p className="event-date">{selectedPurchase.date} • {selectedPurchase.time}</p>
-          </div>
-          <div className="popup-details">
-            <div className="detail-item">
-              <span className="detail-icon">📍</span>
-              <span>{selectedPurchase.location}</span>
+        <div className="purchase-details-popup">
+          <div className="popup-content">
+            <button className="close-popup" onClick={closePurchaseDetails}>×</button>
+            <div className="popup-header">
+              <img src={selectedPurchase.image} alt={selectedPurchase.eventTitle} className="popup-image" />
+              <h3>{selectedPurchase.eventTitle}</h3>
+              <p className="event-date">{selectedPurchase.date} • {selectedPurchase.time}</p>
             </div>
-            <div className="detail-item">
-              <span className="detail-icon">📄</span>
-              <span>{selectedPurchase.description}</span>
+            <div className="popup-details">
+              <div className="detail-item">
+                <span className="detail-icon">📍</span>
+                <span>{selectedPurchase.location}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-icon">📄</span>
+                <span>{selectedPurchase.description}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-icon">🎟️</span>
+                <span><strong>Tickets Bought:</strong> {selectedPurchase.tickets}</span>
+              </div>
             </div>
-            <div className="detail-item">
-              <span className="detail-icon">🎟️</span>
-              <span><strong>Tickets Bought:</strong> {selectedPurchase.tickets}</span>
+            <div className="popup-footer">
+              <button className="btn btn-primary">Download Tickets</button>
             </div>
-          </div>
-          <div className="popup-footer">
-            <button className="btn btn-primary">Download Tickets</button>
           </div>
         </div>
-      </div>
-    )}
+      )}
+
+      {/* Event Details Pop-up */}
+      {selectedEvent && (
+        <div className="event-details-popup">
+          <div className="popup-content">
+            <button className="close-popup" onClick={closeEventDetails}>×</button>
+            <div className="popup-header">
+              <img src={selectedEvent.image} alt={selectedEvent.title} className="popup-image" />
+              <h3>{selectedEvent.title}</h3>
+              <p className="event-date">{selectedEvent.date} • {selectedEvent.time}</p>
+            </div>
+            <div className="popup-details">
+              <div className="detail-item">
+                <span className="detail-icon">📍</span>
+                <span>{selectedEvent.location}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-icon">📄</span>
+                <span>{selectedEvent.description}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-icon">🎟️</span>
+                <span><strong>Price:</strong> {selectedEvent.price}</span>
+              </div>
+              <div className="detail-item">
+                <span className="detail-icon">🎫</span>
+                <span>
+                  <strong>Tickets:</strong>
+                  <input
+                    type="number"
+                    min="1"
+                    value={ticketQuantity}
+                    onChange={handleTicketQuantityChange}
+                    className="ticket-quantity"
+                  />
+                </span>
+              </div>
+            </div>
+            <div className="popup-footer">
+              <button className="btn btn-primary" onClick={handlePurchase}>Purchase Tickets</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Home Section */}
       <section id="home">
@@ -191,7 +267,7 @@ function App() {
                 <h1>Welcome to EvenTure</h1>
                 <p>Your ultimate event management solution</p>
                 <div className="button-container">
-                  <button className="btn view-events">View Events</button>
+                  <button className="btn view-events" onClick={() => scrollToSection('events')}>View Events</button>
                   <button className="btn get-started">Get Started</button>
                 </div>
               </div>
@@ -241,24 +317,29 @@ function App() {
         </div>
       </section>
 
-     {/* Featured Events Section */}
-     <section className="featured-events">
+      {/* Events Section */}
+      <section id="events" className="events-section">
         <h2>Featured Events</h2>
         <div className="events-grid">
-          {featuredEvents.map((event) => (
-            <div className="event-card" key={event.id}>
+          {events.map((event) => (
+            <div className="event-card" key={event.id} onClick={() => handleEventClick(event)}>
               <img src={event.image} alt={event.title} />
+              <div className="event-type">{event.type}</div> {/* Event type badge */}
               <div className="event-card-content">
                 <h3>{event.title}</h3>
                 <p>{event.description}</p>
-                <div className="event-date">{event.date}</div>
+                <div className="event-details">
+                  <span className="date">{event.date}</span>
+                  <span className="time">{event.time}</span>
+                  <span className="location">{event.location}</span>
+                </div>
+                <div className="event-price">{event.price}</div>
                 <button className="btn">View Details</button>
               </div>
             </div>
           ))}
         </div>
       </section>
-
 
       {/* Inquiries Section */}
       <section id="contact" className="inquiries-section">
@@ -287,7 +368,7 @@ function App() {
           <div className="footer-links">
             <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
             <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
-            <a href="#events">Events</a>
+            <a href="#events" onClick={(e) => { e.preventDefault(); scrollToSection('events'); }}>Events</a>
             <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
             <a href="#privacy">Privacy Policy</a>
             <a href="#terms">Terms of Service</a>
