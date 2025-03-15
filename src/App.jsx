@@ -24,7 +24,8 @@ const events = [
     location: 'Central Park, New York',
     price: '$50',
     image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819',
-    type: 'Music', // Event type
+    type: 'Music',
+    speaker: 'John Doe', // Add speaker
   },
   {
     id: 2,
@@ -35,7 +36,8 @@ const events = [
     location: 'San Francisco Convention Center',
     price: '$100',
     image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
-    type: 'Tech', // Event type
+    type: 'Tech',
+    speaker: 'Jane Smith', // Add speaker
   },
   {
     id: 3,
@@ -46,7 +48,8 @@ const events = [
     location: 'Downtown Chicago',
     price: '$30',
     image: 'https://images.unsplash.com/photo-1517649763962-0c623066013b',
-    type: 'Sport', // Event type
+    type: 'Sport',
+    speaker: 'Michael Johnson', // Add speaker
   },
 ];
 
@@ -153,7 +156,7 @@ function App() {
           <a href="#home" onClick={(e) => { e.preventDefault(); scrollToSection('home'); }}>Home</a>
           <a href="#about" onClick={(e) => { e.preventDefault(); scrollToSection('about'); }}>About</a>
           <a href="#contact" onClick={(e) => { e.preventDefault(); scrollToSection('contact'); }}>Contact</a>
-          <a href="#events" onClick={(e) => { e.preventDefault(); scrollToSection('events'); }}>Events</a>
+          <a href="#">Events</a>
           <a href="#purchase-history" onClick={(e) => { e.preventDefault(); togglePurchaseHistory(); }}><FaHistory /></a>
           <a href="#login"><FaUser /></a>
         </div>
@@ -215,47 +218,46 @@ function App() {
 
       {/* Event Details Pop-up */}
       {selectedEvent && (
-        <div className="event-details-popup">
-          <div className="popup-content">
-            <button className="close-popup" onClick={closeEventDetails}>×</button>
-            <div className="popup-header">
-              <img src={selectedEvent.image} alt={selectedEvent.title} className="popup-image" />
-              <h3>{selectedEvent.title}</h3>
-              <p className="event-date">{selectedEvent.date} • {selectedEvent.time}</p>
+      <div className="event-details-popup">
+        <div className="popup-content">
+          <button className="close-popup" onClick={closeEventDetails}>×</button>
+          <div className="popup-header">
+            <img src={selectedEvent.image} alt={selectedEvent.title} className="popup-image" />
+            <h3>{selectedEvent.title}</h3>
+            <p className="event-date">{selectedEvent.date} • {selectedEvent.time}</p>
+          </div>
+          <div className="popup-details">
+            <div className="detail-item">
+              <span className="detail-icon">🎤</span>
+              <span><strong>Speaker:</strong> {selectedEvent.speaker}</span>
             </div>
-            <div className="popup-details">
-              <div className="detail-item">
-                <span className="detail-icon">📍</span>
-                <span>{selectedEvent.location}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-icon">📄</span>
-                <span>{selectedEvent.description}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-icon">🎟️</span>
-                <span><strong>Price:</strong> {selectedEvent.price}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-icon">🎫</span>
-                <span>
-                  <strong>Tickets:</strong>
-                  <input
-                    type="number"
-                    min="1"
-                    value={ticketQuantity}
-                    onChange={handleTicketQuantityChange}
-                    className="ticket-quantity"
-                  />
-                </span>
-              </div>
+            <div className="detail-item">
+              <span className="detail-icon">📍</span>
+              <span><strong>Venue:</strong> {selectedEvent.location}</span>
             </div>
-            <div className="popup-footer">
-              <button className="btn btn-primary" onClick={handlePurchase}>Purchase Tickets</button>
+            <div className="detail-item">
+              <span className="detail-icon">📅</span>
+              <span><strong>Date:</strong> {selectedEvent.date}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-icon">⏰</span>
+              <span><strong>Time:</strong> {selectedEvent.time}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-icon">🎟️</span>
+              <span><strong>Ticket Price:</strong> {selectedEvent.price}</span>
+            </div>
+            <div className="detail-item">
+              <span className="detail-icon">📄</span>
+              <span><strong>Description:</strong> {selectedEvent.description}</span>
             </div>
           </div>
+          <div className="popup-footer">
+            <button className="btn-primary" onClick={handlePurchase}>Purchase Tickets</button>
+          </div>
         </div>
-      )}
+      </div>
+    )}
 
       {/* Home Section */}
       <section id="home">
@@ -319,27 +321,30 @@ function App() {
 
       {/* Events Section */}
       <section id="events" className="events-section">
-        <h2>Featured Events</h2>
-        <div className="events-grid">
-          {events.map((event) => (
-            <div className="event-card" key={event.id} onClick={() => handleEventClick(event)}>
-              <img src={event.image} alt={event.title} />
-              <div className="event-type">{event.type}</div> {/* Event type badge */}
-              <div className="event-card-content">
-                <h3>{event.title}</h3>
-                <p>{event.description}</p>
-                <div className="event-details">
-                  <span className="date">{event.date}</span>
-                  <span className="time">{event.time}</span>
-                  <span className="location">{event.location}</span>
-                </div>
-                <div className="event-price">{event.price}</div>
-                <button className="btn">View Details</button>
-              </div>
-            </div>
-          ))}
+  <h2>Featured Events</h2>
+  <div className="events-grid">
+    {events.map((event) => (
+      <div className="event-card" key={event.id} onClick={() => handleEventClick(event)}>
+        <img src={event.image} alt={event.title} />
+        <div className="event-type">{event.type}</div> {/* Event type badge */}
+        <div className="event-card-content">
+          <h3>{event.title}</h3>
+          <p>{event.description}</p>
+          <div className="event-details">
+            <span className="date">{event.date}</span>
+            <span className="time">{event.time}</span>
+            <span className="location">{event.location}</span>
+          </div>
+          <div className="event-price">{event.price}</div> {/* Ticket Price */}
+          <button className="btn">
+            <span className="icon">🔍</span> {/* Icon added */}
+            View Details
+          </button>
         </div>
-      </section>
+      </div>
+    ))}
+  </div>
+</section>
 
       {/* Inquiries Section */}
       <section id="contact" className="inquiries-section">
